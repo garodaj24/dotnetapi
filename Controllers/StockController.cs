@@ -7,7 +7,6 @@ using dotnetapi.Dtos.Stock;
 using dotnetapi.Interfaces;
 using dotnetapi.Mappers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace dotnetapi.Controllers
 {
@@ -15,12 +14,10 @@ namespace dotnetapi.Controllers
     [ApiController]
     public class StockController : ControllerBase
     {
-        private readonly ApplicationDBContext _context;
         private readonly IStockRepository _stockRepository;
 
-        public StockController(ApplicationDBContext context, IStockRepository stockRepository)
+        public StockController(IStockRepository stockRepository)
         {
-            _context = context;
             _stockRepository = stockRepository;
         }
 
@@ -59,7 +56,6 @@ namespace dotnetapi.Controllers
             {
                 return NotFound();
             }
-            await _context.SaveChangesAsync();
             return Ok(stock.ToStockDto());
         }
 
