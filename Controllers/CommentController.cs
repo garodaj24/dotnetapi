@@ -26,5 +26,16 @@ namespace dotnetapi.Controllers
             var commentsDto = comments.Select(c => c.ToCommentDto());
             return Ok(commentsDto);
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var comment = await _commentRepository.GetByIdAsync(id);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+            return Ok(comment.ToCommentDto());
+        }
     }
 }
