@@ -31,7 +31,7 @@ namespace dotnetapi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var comment = await _commentRepository.GetByIdAsync(id);
             if (comment == null)
@@ -52,6 +52,28 @@ namespace dotnetapi.Controllers
             var comment = commentDto.ToCommentFromCreateDto(commentDto.StockId);
             await _commentRepository.CreateAsync(comment);
             return CreatedAtAction(nameof(GetById), new { id = comment.Id }, comment.ToCommentDto());
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentRequestDto commentDto)
+        {
+            var comment = await _commentRepository.UpdateAsync(id, commentDto);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+            return Ok(comment.ToCommentDto());
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            var comment = await _commentRepository.DeleteAsync(id);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+            return NoContent();
         }
     }
 }
