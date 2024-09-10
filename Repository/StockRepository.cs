@@ -47,6 +47,11 @@ namespace dotnetapi.Repository
             return await _context.Stocks.Include(s => s.Comments).FirstOrDefaultAsync(s => s.Id == id);
         }
 
+        public async Task<bool> StockExistsAsync(int id)
+        {
+            return await _context.Stocks.AnyAsync(s => s.Id == id);
+        }
+
         public async Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto stockDto)
         {
             var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.Id == id);

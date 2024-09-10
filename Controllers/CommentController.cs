@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using dotnetapi.Dtos.Comment;
 using dotnetapi.Interfaces;
 using dotnetapi.Mappers;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,12 @@ namespace dotnetapi.Controllers
     public class CommentController : ControllerBase
     {
         private readonly ICommentRepository _commentRepository;
+        private readonly IStockRepository _stockRepository;
 
-        public CommentController(ICommentRepository commentRepository)
+        public CommentController(ICommentRepository commentRepository, IStockRepository stockRepository)
         {
             _commentRepository = commentRepository;
+            _stockRepository = stockRepository;
         }
 
         [HttpGet]
@@ -36,6 +39,19 @@ namespace dotnetapi.Controllers
                 return NotFound();
             }
             return Ok(comment.ToCommentDto());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateCommentRequestDto commentDto)
+        {
+            var stockExists = await _stockRepository.StockExistsAsync(commentDto.StockId);
+            if (!stockExists)
+            {
+                return BadRequest("Stock does not exist");
+            }
+            var comment = commentDto.ToCommentFromCreateDto(commentDto.StockId);
+            await _commentRepository.CreateAsync(comment);
+            return CreatedAtAction(nameof(GetById), new { id = comment.Id }, comment.ToCommentDto());
         }
     }
 }

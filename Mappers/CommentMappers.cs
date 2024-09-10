@@ -20,5 +20,15 @@ namespace dotnetapi.Mappers
                 StockId = comment.StockId
             };
         }
+
+        public static Comment ToCommentFromCreateDto(this CreateCommentRequestDto commentDto, int stockId)
+        {
+            return new Comment
+            {
+                Title = commentDto.Title,
+                Content = commentDto.Content,
+                StockId = stockId
+            };
+        }
     }
 }

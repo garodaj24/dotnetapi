@@ -27,5 +27,12 @@ namespace dotnetapi.Repository
         {
             return await _context.Comments.FindAsync(id);
         }
+
+        public async Task<Comment> CreateAsync(Comment comment)
+        {
+            await _context.Comments.AddAsync(comment);
+            await _context.SaveChangesAsync();
+            return comment;
+        }
     }
 }
