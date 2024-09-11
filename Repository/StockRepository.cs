@@ -60,6 +60,7 @@ namespace dotnetapi.Repository
                     stocks = query.IsDescending ? stocks.OrderByDescending(s => s.CompanyName) : stocks.OrderBy(s => s.CompanyName);
                 }
             }
+            stocks = stocks.Skip((query.PageNumber - 1) * query.PageSize).Take(query.PageSize);
             return await stocks.ToListAsync();
         }
 
