@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using dotnetapi.Data;
 using dotnetapi.Dtos.Stock;
+using dotnetapi.Helpers;
 using dotnetapi.Interfaces;
 using dotnetapi.Models;
 using Microsoft.EntityFrameworkCore;
@@ -37,9 +38,18 @@ namespace dotnetapi.Repository
             return stock;
         }
 
-        public async Task<List<Stock>> GetAllAsync()
+        public async Task<List<Stock>> GetAllAsync(QueryObject query)
         {
-            return await _context.Stocks.Include(s => s.Comments).ToListAsync();
+            var stocks = _context.Stocks.Include(s => s.Comments).AsQueryable();
+            if (!string.IsNullOrWhiteSpace(query.Symbol))
+            {
+                stocks = stocks.Where(s => s.Symbol == query.Symbol);
+            }
+            if (!string.IsNullOrWhiteSpace(query.CompanyName))
+            {
+                stocks = stocks.Where(s => s.CompanyName == query.CompanyName);
+            }
+            return await stocks.ToListAsync();
         }
 
         public async Task<Stock?> GetByIdAsync(int id)
