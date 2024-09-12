@@ -9,5 +9,6 @@ namespace dotnetapi.Interfaces
     public interface IPortfolioRepository
     {
         public Task<List<Stock>> GetPortfolio(AppUser user);
+        public Task<Portfolio> AddPortfolio(Portfolio portfolio);
     }
 }

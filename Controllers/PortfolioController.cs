@@ -37,5 +37,43 @@ namespace dotnetapi.Controllers
 
             return Ok(userPortfolio);
         }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddPortfolio([FromQuery] string symbol)
+        {
+            var username = User.GetUsername();
+            var appUser = await _userManager.FindByNameAsync(username!);
+            var stock = await _stockRepository.GetBySymbolAsync(symbol);
+
+            if (stock == null)
+            {
+                return BadRequest("Stock not found");
+            }
+
+            var userPortfolio = await _portfolioRepository.GetPortfolio(appUser!);
+
+            if (userPortfolio.Any(s => s.Symbol.ToLower() == symbol.ToLower()))
+            {
+                return BadRequest("Stock already in portfolio");
+            }
+
+            var portfolio = new Portfolio
+            {
+                AppUserId = appUser!.Id,
+                StockId = stock.Id
+            };
+
+            await _portfolioRepository.AddPortfolio(portfolio);
+
+            if (portfolio == null)
+            {
+                return BadRequest("Failed to add stock to portfolio");
+            }
+            else 
+            {
+                return Created();
+            }
+        }
     }
 }
