@@ -38,5 +38,19 @@ namespace dotnetapi.Repository
             await _context.SaveChangesAsync();
             return portfolio;
         }
+
+        public async Task<Portfolio?> RemovePortfolio(AppUser user, string symbol)
+        {
+            var portfolio = await _context.Portfolios.FirstOrDefaultAsync(x => x.AppUserId == user.Id && x.Stock.Symbol == symbol);
+
+            if (portfolio == null)
+            {
+                return null;
+            }
+
+            _context.Portfolios.Remove(portfolio);
+            await _context.SaveChangesAsync();
+            return portfolio;
+        }
     }
 }

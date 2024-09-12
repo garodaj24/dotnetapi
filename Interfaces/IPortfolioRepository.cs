@@ -10,5 +10,6 @@ namespace dotnetapi.Interfaces
     {
         public Task<List<Stock>> GetPortfolio(AppUser user);
         public Task<Portfolio> AddPortfolio(Portfolio portfolio);
+        public Task<Portfolio?> RemovePortfolio(AppUser user, string symbol);
     }
 }

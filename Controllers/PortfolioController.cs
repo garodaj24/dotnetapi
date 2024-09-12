@@ -75,5 +75,26 @@ namespace dotnetapi.Controllers
                 return Created();
             }
         }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> RemovePortfolio([FromQuery] string symbol)
+        {
+            var username = User.GetUsername();
+            var appUser = await _userManager.FindByNameAsync(username!);
+
+            var userPortfolio = await _portfolioRepository.GetPortfolio(appUser!);
+
+            var filteredStock = userPortfolio.Where(s => s.Symbol.ToLower() == symbol.ToLower()).ToList();
+
+            if (filteredStock.Count == 0)
+            {
+                return BadRequest("Stock not found in portfolio");
+            }
+
+            await _portfolioRepository.RemovePortfolio(appUser!, symbol);
+
+            return NoContent();
+        }
     }
 }
