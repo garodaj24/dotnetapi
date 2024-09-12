@@ -51,13 +51,13 @@ namespace dotnetapi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "57b2068a-ee3d-49aa-9c56-9cf1ccbbd7f0",
+                            Id = "30b04693-8e55-415d-a529-6db2a49e2f61",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "5a6eb0d4-5485-4013-8656-9bf8b884321b",
+                            Id = "8dccf78e-fd1f-4900-8c03-6ef5101e2caa",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -242,6 +242,10 @@ namespace dotnetapi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -257,6 +261,8 @@ namespace dotnetapi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.HasIndex("StockId");
 
@@ -365,9 +371,17 @@ namespace dotnetapi.Migrations
 
             modelBuilder.Entity("dotnetapi.Models.Comment", b =>
                 {
+                    b.HasOne("dotnetapi.Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("dotnetapi.Models.Stock", "Stock")
                         .WithMany("Comments")
                         .HasForeignKey("StockId");
+
+                    b.Navigation("AppUser");
 
                     b.Navigation("Stock");
                 });
